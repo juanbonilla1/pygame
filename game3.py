@@ -8,16 +8,15 @@ pygame.init()
 # Definir dimensiones de la pantalla
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("BLUE vs RED")
+pygame.display.set_caption("Juego con Menú")
 
 # Definir colores
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-BLUE=(0, 0, 255)
 BLACK = (0, 0, 0)
 
-# Cargar música
-pygame.mixer.music.load('neon-gaming-128925.mp3')
+# Cargar música de fondo
+pygame.mixer.music.load('stranger-things-124008.mp3')
 pygame.mixer.music.set_volume(0.5)  # Ajustar volumen (0.0 - 1.0)
 
 # Cargar sonido para cuando el jugador pierde
@@ -31,7 +30,7 @@ player_speed = 5
 
 # Definir variables de los enemigos
 enemy_size = 50
-enemy_speed = 3  # Velocidad inicial de los enemigos
+enemy_speed = 3
 enemies = []
 
 # Definir marcador de puntos
@@ -51,8 +50,8 @@ def move_enemies():
 
 # Función para dibujar al jugador y a los enemigos en la pantalla
 def draw_objects():
-    screen.fill(BLACK)
-    pygame.draw.rect(screen, BLUE, (player_x, player_y, player_size, player_size))
+    screen.fill(WHITE)
+    pygame.draw.rect(screen, RED, (player_x, player_y, player_size, player_size))
     for enemy in enemies:
         pygame.draw.rect(screen, RED, (enemy[0], enemy[1], enemy_size, enemy_size))
 
@@ -62,13 +61,14 @@ def draw_objects():
 
 # Función para mostrar el menú de inicio
 def show_menu():
-    text1 = font.render("Presiona cualquier tecla para comenzar", True, RED)
-    text2 = font.render("Recuerda usar P para pausar el juego y Q para salir", True, RED)
-    text_rect1 = text1.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
-    text_rect2 = text2.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
-
-    screen.blit(text1, text_rect1)
-    screen.blit(text2, text_rect2)
+    screen.fill(BLACK)
+    font_menu = pygame.font.Font(None, 50)
+    text_start = font_menu.render("Presiona cualquier tecla para comenzar", True, WHITE)
+    text_rect_start = text_start.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
+    screen.blit(text_start, text_rect_start)
+    text_controls = font_menu.render("P: Pausa / C: Continuar / Q: Salir", True, WHITE)
+    text_rect_controls = text_controls.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
+    screen.blit(text_controls, text_rect_controls)
     pygame.display.update()
 
     waiting = True
@@ -84,20 +84,19 @@ def show_menu():
 def show_pause_menu():
     screen.fill(BLACK)
     font_pause = pygame.font.Font(None, 50)
-    text_pause = font_pause.render("PAUSA", True, RED)
+    text_pause = font_pause.render("PAUSA", True, WHITE)
     text_rect_pause = text_pause.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 50))
     screen.blit(text_pause, text_rect_pause)
 
-    text_resume = font_pause.render("Presiona P para continuar", True, RED)
+    text_resume = font_pause.render("Presiona C para continuar", True, WHITE)
     text_rect_resume = text_resume.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 50))
     screen.blit(text_resume, text_rect_resume)
 
-    text_quit = font_pause.render("Presiona Q para salir", True, RED)
+    text_quit = font_pause.render("Presiona Q para salir", True, WHITE)
     text_rect_quit = text_quit.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 100))
     screen.blit(text_quit, text_rect_quit)
 
     pygame.display.update()
-
 
 # Mostrar el menú de inicio
 show_menu()
@@ -108,6 +107,7 @@ pygame.mixer.music.play(-1)  # -1 significa que se repetirá continuamente
 # Bucle principal del juego
 running = True
 clock = pygame.time.Clock()
+paused = False
 
 while running:
     clock.tick(60)
@@ -116,6 +116,22 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                paused = not paused
+                if paused:
+                    pygame.mixer.music.pause()
+                    show_pause_menu()
+                else:
+                    pygame.mixer.music.unpause()
+            elif event.key == pygame.K_c:
+                paused = False
+                pygame.mixer.music.unpause()
+            elif event.key == pygame.K_q:
+                running = False
+
+    if paused:
+        continue  # No actualices ni manejes la lógica del juego si está pausado
 
     # Movimiento del jugador
     keys = pygame.key.get_pressed()
@@ -146,8 +162,6 @@ while running:
         elif enemy[1] > HEIGHT:
             enemies.remove(enemy)
             score += 1
-            # Aumentar la velocidad de los enemigos cada vez que se elimina uno
-            enemy_speed += 0.1  # Ajusta este valor según tu preferencia
 
 # Mostrar pantalla de fin de juego
 screen.fill(WHITE)
@@ -156,7 +170,7 @@ screen.blit(text, (WIDTH // 2 - 200, HEIGHT // 2))
 pygame.display.update()
 
 # Esperar unos segundos antes de salir del juego
-pygame.time.wait(10000)
+pygame.time.wait(2000)
 
 # Salir de Pygame
 pygame.quit()
