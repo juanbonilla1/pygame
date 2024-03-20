@@ -14,6 +14,7 @@ pygame.display.set_caption("Juego con Menú")
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+BLUE=(0, 0, 255)
 
 # Cargar música de fondo
 pygame.mixer.music.load('stranger-things-124008.mp3')
@@ -51,7 +52,7 @@ def move_enemies():
 # Función para dibujar al jugador y a los enemigos en la pantalla
 def draw_objects():
     screen.fill(WHITE)
-    pygame.draw.rect(screen, RED, (player_x, player_y, player_size, player_size))
+    pygame.draw.rect(screen, BLUE, (player_x, player_y, player_size, player_size))
     for enemy in enemies:
         pygame.draw.rect(screen, RED, (enemy[0], enemy[1], enemy_size, enemy_size))
 

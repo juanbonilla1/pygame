@@ -108,6 +108,7 @@ pygame.mixer.music.play(-1)  # -1 significa que se repetirá continuamente
 # Bucle principal del juego
 running = True
 clock = pygame.time.Clock()
+paused = False
 
 while running:
     clock.tick(60)
@@ -117,6 +118,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    if paused:
+        continue  # No actualices ni manejes la lógica del juego si está pausado
+
+    
     # Movimiento del jugador
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] and player_x > 0:
